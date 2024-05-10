@@ -28,7 +28,7 @@ defmodule Scalper.MixProject do
       {:req, "~> 0.4.0"},
       {:floki, "~> 0.36.0"},
       {:charset_detect, "~> 0.1.1"},
-      {:tzdata, "~> 1.1"}
+      {:tz, "~> 0.26.5"}
     ]
   end
 end

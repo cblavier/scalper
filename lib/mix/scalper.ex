@@ -10,7 +10,25 @@ defmodule Mix.Tasks.Scalper do
   @user_agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
   @impl Mix.Task
+  def run([interval_in_mn]) do
+    interval_in_mn
+    |> String.to_integer()
+    |> Kernel.*(60 * 1000)
+    |> run_scrapping_loop()
+  end
+
   def run(_) do
+    run_scrapping()
+  end
+
+  defp run_scrapping_loop(interval_in_ms) do
+    run_scrapping()
+    Process.sleep(interval_in_ms)
+    run_scrapping_loop(interval_in_ms)
+  end
+
+  defp run_scrapping do
+    Mix.Shell.IO.info("#{now()}: running new scrapping session")
     spreadsheet_id = System.get_env("SPREADSHEET_ID")
     Application.ensure_all_started(:scalper)
 
@@ -53,7 +71,8 @@ defmodule Mix.Tasks.Scalper do
             {:error, %{row: row, updated_at: now()}}
         end
       end,
-      timeout: :infinity
+      timeout: :infinity,
+      max_concurrency: System.schedulers_online() * 4
     )
     |> Enum.filter(&(elem(&1, 0) == :ok))
     |> Enum.map(&elem(&1, 1))
@@ -69,6 +88,8 @@ defmodule Mix.Tasks.Scalper do
         %ValueRange{range: "F#{row}:G#{row}", values: [[updated_at, "unknown error"]]}
     end)
     |> values_batch_update(conn, spreadsheet_id)
+
+    Mix.Shell.IO.info("#{now()}: scrapping session has finished")
   end
 
   defp decode(text) do

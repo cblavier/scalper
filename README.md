@@ -43,3 +43,9 @@ mix deps.get
 ```
 mix scalper
 ```
+
+or if you want to run it indefintely every 5 mn
+
+```
+mix scalper 5
+```
