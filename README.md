@@ -7,7 +7,7 @@ How does it work?
 
 - it reads a list of URLs from a Google spreadsheet (column C)
 - for each of these URLs it performs an HTTP GET query and performs a negative search based on the
-  column D from the spreadsheet: if the text is present, then the product is anavailable
+  column D from the spreadsheet: if the text is present, then the product is unavailable
 - then it updates the spreadsheet with availability results.
 
 ## Installation
