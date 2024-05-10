@@ -1,0 +1,2 @@
+defmodule Scalper do
+end
